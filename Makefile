@@ -1,5 +1,5 @@
-BINARY := weather
-CMD    := ./cmd/weather
+BINARY := weathertui
+CMD    := ./cmd/weathertui
 
 .PHONY: build run test install clean
 

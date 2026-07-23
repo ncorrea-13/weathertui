@@ -14,25 +14,25 @@ Inspired in [meteo-cli](https://codeberg.org/victorhck/meteo-cli) by Victorhck, 
 ### With `go install` (recommended)
 
 ```bash
-go install github.com/ncorrea-13/weathertui/cmd/weather@latest
+go install github.com/ncorrea-13/weathertui/cmd/weathertui@latest
 ```
 
-This builds and installs the `weather` binary into `$(go env GOPATH)/bin` (or `$GOBIN` if set). Make sure that folder is on your `$PATH`.
+This builds and installs the `weathertui` binary into `$(go env GOPATH)/bin` (or `$GOBIN` if set). Make sure that folder is on your `$PATH`.
 
 ### From source
 
 ```bash
-git clone git@github.com:ncorrea-13/weathertui.git weather
-cd weather
-make build      # produces ./weather at the project root
+git clone git@github.com:ncorrea-13/weathertui.git
+cd weathertui
+make build      # produces ./weathertui at the project root
 # or:
-make install    # equivalent to `go install ./cmd/weather`
+make install    # equivalent to `go install ./cmd/weathertui`
 ```
 
 ## Usage
 
 ```bash
-./weather
+./weathertui
 ```
 
 On first run it asks for the API key, the city, and the country code (e.g. `AR`), and saves them to `~/.config/openweather.conf`:
@@ -48,16 +48,16 @@ Subsequent runs read that file directly, without asking again.
 ## Development
 
 ```bash
-make run      # go run ./cmd/weather
+make run      # go run ./cmd/weathertui
 make test     # go test ./...
-make install  # go install ./cmd/weather
+make install  # go install ./cmd/weathertui
 make clean    # removes the compiled binary
 ```
 
 ## Structure
 
 ```
-cmd/weather/       — entrypoint (wiring: config + tea.Program)
+cmd/weathertui/     — entrypoint (wiring: config + tea.Program)
 internal/config/    — reads/writes ~/.config/openweather.conf
 internal/owm/        — OpenWeatherMap API client
 internal/tui/        — Bubble Tea model (Model/Update/View), styles, icons

@@ -63,7 +63,7 @@ internal/owm/        — OpenWeatherMap API client
 internal/tui/        — Bubble Tea model (Model/Update/View), styles, icons
 ```
 
-## `scripts/weather.sh` (the original bash version)
+## `scripts/weathertui.sh` (the original bash version)
 
 It's kept in the repo as a reference/lightweight alternative.
 
@@ -78,10 +78,10 @@ It's kept in the repo as a reference/lightweight alternative.
 **Usage:**
 
 ```bash
-./scripts/weather.sh              # show the weather once and exit
-./scripts/weather.sh -w           # watch mode, refresh every 60s (Ctrl+C to quit)
-./scripts/weather.sh -w 30        # watch mode with a custom interval (30s)
-./scripts/weather.sh -h           # help
+./scripts/weathertui.sh              # show the weather once and exit
+./scripts/weathertui.sh -w           # watch mode, refresh every 60s (Ctrl+C to quit)
+./scripts/weathertui.sh -w 30        # watch mode with a custom interval (30s)
+./scripts/weathertui.sh -h           # help
 ```
 
 **Dependencies:** `bash`, `curl`, `jq`, and a terminal with [Nerd Fonts](https://www.nerdfonts.com/) so the icons render correctly (otherwise they'll show up as blank spaces or boxes).

@@ -36,7 +36,6 @@ var windDirs = [16]string{
 	"W", "WNW", "NW", "NNW",
 }
 
-// WindDirection converts a wind bearing in degrees to its 16-point compass label.
 func WindDirection(deg int) string {
 	idx := ((deg + 11) / 22) % 16
 	if idx < 0 {
@@ -45,7 +44,6 @@ func WindDirection(deg int) string {
 	return windDirs[idx]
 }
 
-// CurrentWeather is the subset of the /weather response we care about.
 type CurrentWeather struct {
 	Name        string
 	CountryCode string
@@ -77,16 +75,9 @@ type owmCurrentResp struct {
 		Pressure  int     `json:"pressure"`
 	} `json:"main"`
 	Wind struct {
-		Speed float64 `json:"speed"`
-		Deg   int     `json:"deg"`
-		// Gust es *float64 (puntero) y no float64 a propósito: la API omite
-		// por completo el campo "gust" cuando no hay ráfagas que reportar.
-		// Con float64 no habría forma de distinguir "no vino el campo" de
-		// "vino y es 0.0"; nil vs valor-seteado es la forma en Go de tener
-		// lo que en Rust sería Option<f64> — sin envoltorio, es directamente
-		// un puntero que puede ser nil. Se resuelve más abajo en
-		// FetchCurrent con el `if r.Wind.Gust != nil`.
-		Gust *float64 `json:"gust"`
+		Speed float64  `json:"speed"`
+		Deg   int      `json:"deg"`
+		Gust  *float64 `json:"gust"`
 	} `json:"wind"`
 	Rain    map[string]float64 `json:"rain"`
 	Weather []struct {
@@ -99,10 +90,6 @@ func msToKmh(ms float64) int {
 	return int(math.Round(ms * 3.6))
 }
 
-// fetchJSON no recibe context.Context — client.Get() usa el timeout fijo de
-// httpTimeout (10s) como único mecanismo de corte, no hay forma de
-// cancelarlo antes desde el caller (ver nota en tui/model.go:fetchCmd sobre
-// qué pasa con esto si el usuario cierra el programa a mitad de un fetch).
 func fetchJSON(reqURL string, out any) error {
 	client := &http.Client{Timeout: httpTimeout}
 
@@ -110,10 +97,6 @@ func fetchJSON(reqURL string, out any) error {
 	if err != nil {
 		return fmt.Errorf("error de red: %w", err)
 	}
-	// defer se evalúa (resp.Body se captura) en el momento de esta línea,
-	// pero se ejecuta al retornar la función, sea por cualquiera de los
-	// tres `return` de abajo o por un panic. Con múltiples puntos de salida
-	// como acá, es lo que evita repetir el Close() en cada uno.
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
@@ -125,23 +108,11 @@ func fetchJSON(reqURL string, out any) error {
 		var apiErr struct {
 			Message string `json:"message"`
 		}
-		// Error ignorado a propósito (`_ =`): esto es "best effort". Si el
-		// body de un error HTTP no es JSON válido, apiErr se queda en su
-		// zero value (Message == "") y el fmt.Errorf de abajo simplemente
-		// imprime un mensaje vacío — no hay nada mejor que hacer con ese
-		// error de parseo, ya estamos construyendo un error a partir de
-		// otro error.
 		_ = json.Unmarshal(body, &apiErr)
 		return fmt.Errorf("API error (%d): %s", resp.StatusCode, apiErr.Message)
 	}
 
 	if err := json.Unmarshal(body, out); err != nil {
-		// %w (no %v) envuelve el error original preservando su cadena, para
-		// que quien llame más arriba pueda hacer errors.Is/errors.As sobre
-		// él si necesita distinguir el tipo de fallo. Nadie en este
-		// proyecto hace ese unwrap hoy, pero wrappear con %w al propagar es
-		// el default idiomático en Go — %v perdería esa cadena para
-		// siempre.
 		return fmt.Errorf("error parseando JSON: %w", err)
 	}
 	return nil
@@ -190,7 +161,6 @@ func FetchCurrent(cfg config.Config) (CurrentWeather, error) {
 	return cw, nil
 }
 
-// ForecastPoint is a single 3-hour step from the /forecast endpoint.
 type ForecastPoint struct {
 	Time   time.Time
 	Temp   float64
@@ -198,7 +168,6 @@ type ForecastPoint struct {
 	Pop    float64 // probability of precipitation, 0..1
 }
 
-// ForecastDay groups the 3-hour steps of a calendar day into a min/max summary.
 type ForecastDay struct {
 	Date   time.Time
 	Min    int
@@ -246,12 +215,6 @@ func FetchForecast(cfg config.Config) (ForecastData, error) {
 		bestNoonGap time.Duration
 		set         bool
 	}
-	// dayOrder existe solo por esto: iterar un map en Go no tiene orden
-	// garantizado (el runtime lo randomiza a propósito, justamente para que
-	// nadie dependa de un orden implícito). days sirve para agregar por
-	// clave "YYYY-MM-DD" en O(1); dayOrder es la lista aparte que recuerda
-	// en qué orden cronológico apareció cada clave por primera vez, para
-	// poder reconstruir fd.Days abajo en orden.
 	dayOrder := []string{}
 	days := map[string]*dayAgg{}
 

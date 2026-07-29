@@ -2,6 +2,8 @@
 
 Terminal UI for checking the current weather, written in Go. Uses OpenWeatherMap.
 
+![[screenshots/example.png]](https://github.com/ncorrea-13/weathertui/blob/main/screenshots/example.png)
+
 Inspired in [meteo-cli](https://codeberg.org/victorhck/meteo-cli) by Victorhck, adapted to use OpenWeatherMap instead of Meteoclimatic. `weathertui` is the Go port of that same idea: an interactive TUI with Bubble Tea instead of a bash loop with `curl`+`jq`. There is also a minimal bash version in the /scripts directory, which is kept as a reference and lightweight alternative. It works more as a lite version.
 
 ## Requirements

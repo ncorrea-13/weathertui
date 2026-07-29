@@ -66,13 +66,11 @@ func (m Model) renderDashboard() string {
 
 	sections = append(sections, "", m.renderFooter())
 
-	// Center every section as a block against the widest one (usually the
-	// 5-day forecast row), instead of leaving narrower sections flush left.
 	return lipgloss.JoinVertical(lipgloss.Center, sections...)
 }
 
 func (m Model) renderHeader() string {
-	title := styleTitle.Render(iClear + "  OPENWEATHERMAP")
+	title := styleTitle.Render(iClear + "  WEATHERTUI")
 	url := styleURL.Render("https://openweathermap.org/")
 	return lipgloss.JoinVertical(lipgloss.Center, title, url)
 }
@@ -83,9 +81,6 @@ func (m Model) renderLocation() string {
 	return lipgloss.JoinVertical(lipgloss.Left, loc, cond)
 }
 
-// padRight pads plain ASCII labels (no icons/wide runes) to width. Only use
-// it on strings you know are single-byte-per-cell; for anything with icons
-// or accented/wide runes use padVisual, which measures actual cell width.
 func padRight(s string, width int) string {
 	if len(s) >= width {
 		return s
@@ -93,10 +88,6 @@ func padRight(s string, width int) string {
 	return s + strings.Repeat(" ", width-len(s))
 }
 
-// padVisual pads s to width terminal cells, measuring width the same way
-// lipgloss does. Needed for anything that mixes icons/degree signs with
-// plain text, where len(s) (byte count) would under-pad and ragged the
-// box's right border.
 func padVisual(s string, width int) string {
 	if w := lipgloss.Width(s); w < width {
 		s += strings.Repeat(" ", width-w)
@@ -104,8 +95,6 @@ func padVisual(s string, width int) string {
 	return s
 }
 
-// centerTitle centers a rendered title within width, widening to fit the
-// title itself if it's already longer than the column it sits over.
 func centerTitle(title string, width int) string {
 	if w := lipgloss.Width(title); w > width {
 		width = w
@@ -113,23 +102,12 @@ func centerTitle(title string, width int) string {
 	return lipgloss.PlaceHorizontal(width, lipgloss.Center, title)
 }
 
-// iconPrefixWidth is the terminal-cell width of a leading "icon + space"
-// prefix (every Nerd Font glyph used here renders as 1 cell).
 const iconPrefixWidth = 2
 
-// centerTitleAfterIcon centers title over textWidth (the row text with its
-// icon prefix stripped out), then shifts it right by iconPrefixWidth so it
-// still lines up with icon-prefixed rows below it. Without this, the icon
-// pulls the visible text rightward but the title stays centered over the
-// icon+text combo, so the title looks off-center relative to what you
-// actually read.
 func centerTitleAfterIcon(title string, textWidth int) string {
 	return strings.Repeat(" ", iconPrefixWidth) + centerTitle(title, textWidth)
 }
 
-// twoColRows lays out label/value pairs as two aligned columns, sizing the
-// left column to whatever its longest row actually needs (measured in
-// terminal cells, not bytes) instead of a hardcoded width.
 func twoColRows(pairs [][2]string) string {
 	leftWidth := 0
 	for _, p := range pairs {
@@ -158,17 +136,10 @@ func (m Model) renderTemperature() string {
 	return lipgloss.JoinVertical(lipgloss.Left, title, body)
 }
 
-// renderWindAtmosphere places Wind (speed/gust/direction) and Atmosphere
-// (pressure/precipitation/humidity) side by side, each under its own title
-// — grouping pressure and humidity under "Wind" was misleading, they're not
-// wind readings.
 func (m Model) renderWindAtmosphere() string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, m.renderWind(), "   ", m.renderAtmosphere())
 }
 
-// iconRows renders icon+text pairs as a left-aligned block and returns it
-// alongside the max text width (icon excluded), so a title above it can be
-// centered over the text via centerTitleAfterIcon.
 func iconRows(pairs [][2]string) (body string, textWidth int) {
 	rows := make([]string, len(pairs))
 	for i, p := range pairs {
@@ -206,10 +177,6 @@ func (m Model) renderAtmosphere() string {
 	return lipgloss.JoinVertical(lipgloss.Left, title, "", body)
 }
 
-// sparkBarWidth is how many terminal cells each forecast point's bar draws
-// as, and sparkColWidth how much horizontal room its hour label gets —
-// widening the chart so each time step actually reads at a glance instead
-// of packing into a dense one-line sparkline.
 const (
 	sparkBarWidth = 4
 	sparkColWidth = sparkBarWidth + 2
@@ -231,12 +198,6 @@ func (m Model) renderSparkline() string {
 			max = p.Temp
 		}
 	}
-	// []rune(string) es obligatorio acá, no cosmético: sparkline devuelve
-	// bloques Unicode (▁▂▃...) que ocupan 3 bytes cada uno en UTF-8. Indexar
-	// el string directo (sparkline(temps)[i]) daría bytes sueltos de un
-	// caracter multi-byte, no el caracter completo. Convertir a []rune
-	// primero paga el costo de decodificar todo el string una vez, y a
-	// cambio barRunes[i] indexa por caracter real.
 	barRunes := []rune(sparkline(temps))
 
 	cols := make([]string, len(slice))
@@ -250,8 +211,6 @@ func (m Model) renderSparkline() string {
 
 	rangeText := styleGray.Render(fmt.Sprintf("%.0f°C ↔ %.0f°C", min, max))
 
-	// Range on the same row as the title, pushed to the right edge of the
-	// chart instead of trailing it on its own line below.
 	title := styleSectionTitleFc.Render(iClock + " Next 24h")
 	header := padVisual(title, lipgloss.Width(row)-lipgloss.Width(rangeText)) + rangeText
 

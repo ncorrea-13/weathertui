@@ -350,7 +350,7 @@ show_weather() {
   clear
 
   box_top
-  box_row_centered "$(printf "%b%s  OPENWEATHERMAP%b" "$CYAN" "$I_CLEAR" "$RESET")" -1
+  box_row_centered "$(printf "%b%s  WEATHERTUI%b" "$CYAN" "$I_CLEAR" "$RESET")" -1
   box_row_centered "$(printf "%bhttps://openweathermap.org/%b" "$CYAN" "$RESET")"
   box_blank
 

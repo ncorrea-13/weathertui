@@ -33,8 +33,6 @@ const (
 	iRefresh   = "" // nf-fa-refresh
 	iCalendar  = "" // nf-fa-calendar
 
-	// Written directly from Unicode codepoints (not pasted glyphs) so the
-	// exact character is unambiguous in source and diff-safe.
 	iSpeed = "" // nf-fa-tachometer
 	iGust  = "" // nf-weather-windy
 	iDir   = "" // nf-fa-compass
@@ -49,15 +47,6 @@ const (
 	iCloudy  = "" // nf-weather-cloudy
 )
 
-// skyIcon maps an OpenWeatherMap condition code to an icon + short label,
-// mirroring the range-based mapping from weather.sh.
-//
-// A diferencia de C/PHP, el switch de Go no hace fallthrough entre cases
-// por default (cada case termina implícito en un break; hay un `fallthrough`
-// explícito si de verdad se lo necesita, no se usa acá). Y un switch sin
-// expresión, como este (`switch { case cond1: ...}`), es simplemente una
-// cadena de if/else if más legible — no compara nada contra un valor, cada
-// case es su propia condición booleana.
 func skyIcon(code int, fallback string) string {
 	switch {
 	case code >= 200 && code < 300:
@@ -82,12 +71,6 @@ func skyIcon(code int, fallback string) string {
 		return fallback
 	}
 }
-
-// skyIconOnly usa `case code == 801, code == 802:` en vez de `||` — dos
-// formas equivalentes de agrupar condiciones en un mismo case en Go
-// (comparable al `801 | 802 => ...` de un match en Rust), mezcladas acá con
-// las de arriba solo porque skyIcon ya existía con `||`. No hay diferencia
-// de comportamiento entre las dos formas.
 
 // skyIconOnly is the same mapping but returns just the glyph, for compact forecast rows.
 func skyIconOnly(code int) string {

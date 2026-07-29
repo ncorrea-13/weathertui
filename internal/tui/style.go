@@ -17,9 +17,6 @@ package tui
 
 import "github.com/charmbracelet/lipgloss"
 
-// Every role below gets its own color — nothing here is reused for two
-// different meanings, except the box border deliberately matching the
-// header (it's the same "frame" element).
 var (
 	colorCyan   = lipgloss.Color("14")  // header title/url + box border
 	colorBlue   = lipgloss.Color("12")  // City/Condition labels

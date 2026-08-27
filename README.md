@@ -1,27 +1,39 @@
+<div align="center">
+
 # weathertui
 
-Terminal UI for checking the current weather, written in Go.
+**Terminal UI for checking the current weather, written in Go**
 
-![[screenshots/example.png]](https://github.com/ncorrea-13/weathertui/blob/main/screenshots/example.png)
+[![CI](https://github.com/ncorrea-13/weathertui/actions/workflows/ci.yml/badge.svg)](https://github.com/ncorrea-13/weathertui/actions/workflows/ci.yml)
+[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Bubble Tea](https://img.shields.io/badge/Bubble%20Tea-1.3-FF69B4?logo=go&logoColor=white)](https://github.com/charmbracelet/bubbletea)
+[![OpenWeatherMap](https://img.shields.io/badge/OpenWeatherMap-API-EB6E4B)](https://openweathermap.org/api)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
-Inspired in [meteo-cli](https://codeberg.org/victorhck/meteo-cli) by Victorhck, adapted to use OpenWeatherMap instead of Meteoclimatic. There is also a minimal bash version in the /scripts directory, which is kept as a reference and lightweight alternative. It works more as a lite version.
+</div>
 
-## Requirements
+---
+<p align="center">
+  <img src="screenshots/example.png" alt="example" width="600">
+</p>
 
-- Go 1.26+
-- An OpenWeatherMap API key (free at <https://openweathermap.org/api>)
+Terminal application that fetches the current weather for a city from the OpenWeatherMap API and renders it as a TUI. Single user, runs locally, no server component. Inspired by [meteo-cli](https://codeberg.org/victorhck/meteo-cli) by Victorhck, adapted to OpenWeatherMap instead of Meteoclimatic. A minimal bash equivalent lives in [`scripts/`](scripts/) as a lightweight, dependency-free alternative.
 
-## Installation
+## Stack
 
-### With `go install` (recommended)
+| Layer | Tech |
+| --- | --- |
+| Language | Go 1.26+ |
+| TUI framework | [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss) |
+| Data source | OpenWeatherMap API |
+
+## Quick Start
+
+### With `go install`
 
 ```bash
 go install github.com/ncorrea-13/weathertui/cmd/weathertui@latest
 ```
-
-### Prebuilt binaries
-
-You can download them from [Github Releases](https://github.com/ncorrea-13/weathertui/releases).
 
 ### From source
 
@@ -29,25 +41,24 @@ You can download them from [Github Releases](https://github.com/ncorrea-13/weath
 git clone https://github.com/ncorrea-13/weathertui
 cd weathertui
 make build      # produces ./weathertui at the project root
-# or:
-make install    # equivalent to `go install ./cmd/weathertui`
-```
-
-## Usage
-
-```bash
 ./weathertui
 ```
 
-On first run it asks for the API key, the city, and the country code, and saves them to `~/.config/openweather.conf`:
+On first run it asks for the API key, city, and country code, and saves them to `~/.config/openweather.conf`. Subsequent runs read that file directly.
 
-```
-OWM_API_KEY="your-api-key"
-CITY="Mendoza"
-COUNTRY="AR"
-```
+### Prebuilt binaries
 
-Subsequent runs read that file directly, without asking again.
+Download from [GitHub Releases](https://github.com/ncorrea-13/weathertui/releases).
+
+## Configuration
+
+No container setup, no `.env` — config lives in a single file, created interactively on first run (`internal/config/config.go`):
+
+| Key | Required | Description |
+| --- | --- | --- |
+| `OWM_API_KEY` | Yes | OpenWeatherMap API key ([get one free](https://openweathermap.org/api)) |
+| `CITY` | Yes | City to check the weather for (e.g. `Mendoza`) |
+| `COUNTRY` | No | ISO country code (e.g. `AR`) |
 
 ## Development
 
@@ -58,29 +69,37 @@ make install  # go install ./cmd/weathertui
 make clean    # removes the compiled binary
 ```
 
+## Project Structure
+
+```
+cmd/
+└── weathertui/         # main entrypoint, wires config + TUI program
+internal/
+├── config/             # reads/writes ~/.config/openweather.conf
+├── owm/                # OpenWeatherMap API client
+└── tui/                # Bubble Tea model, view, styles, icons, sparkline
+scripts/
+├── weathertui.sh       # bash/curl/jq lightweight alternative
+└── package.sh          # binary packaging for releases
+```
+
 ## `scripts/weathertui.sh`
 
-It's kept in the repo as a reference/lightweight alternative.
-
-**What it does:**
-
-1. Reads `~/.config/openweather.conf`. If the API key is missing, it exits with an error.
-2. Builds the query and makes the request with `curl -fsSL`.
-3. Parses the JSON response with `jq`.
-4. Maps the OpenWeatherMap condition code to a Nerd Font icon + label.
-5. Draws everything in the box.
-
-**Usage:**
+Kept as a reference/lightweight alternative — no Go toolchain needed.
 
 ```bash
 ./scripts/weathertui.sh              # show the weather once and exit
-./scripts/weathertui.sh -w           # watch mode, refresh every 60s (Ctrl+C to quit)
-./scripts/weathertui.sh -w 30        # watch mode with a custom interval (30s)
+./scripts/weathertui.sh -w           # watch mode, refresh every 60s
+./scripts/weathertui.sh -w 30        # watch mode, custom interval
 ./scripts/weathertui.sh -h           # help
 ```
 
-**Dependencies:** `bash`, `curl`, `jq`, and a Nerd Font installed so the icons render correctly.
+Dependencies: `bash`, `curl`, `jq`, and a Nerd Font for the icons.
 
 ## License
 
 [GPL-3.0](LICENSE), same as [meteo-cli](https://codeberg.org/victorhck/meteo-cli), the project this one is inspired by.
+
+</content>
+
+_Mendoza, Argentina · Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))_

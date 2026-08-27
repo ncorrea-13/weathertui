@@ -13,8 +13,9 @@
 </div>
 
 ---
-
-![example](screenshots/example.png)
+<p align="center">
+  <img src="screenshots/example.png" alt="example" width="600">
+</p>
 
 Terminal application that fetches the current weather for a city from the OpenWeatherMap API and renders it as a TUI. Single user, runs locally, no server component. Inspired by [meteo-cli](https://codeberg.org/victorhck/meteo-cli) by Victorhck, adapted to OpenWeatherMap instead of Meteoclimatic. A minimal bash equivalent lives in [`scripts/`](scripts/) as a lightweight, dependency-free alternative.
 
@@ -25,8 +26,6 @@ Terminal application that fetches the current weather for a city from the OpenWe
 | Language | Go 1.26+ |
 | TUI framework | [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss) |
 | Data source | OpenWeatherMap API |
-| Config | Plain key-value file (`~/.config/openweather.conf`) |
-| CI | GitHub Actions (`gofmt`, `go vet`, `go build`, `go test`, `shellcheck`) |
 
 ## Quick Start
 
@@ -101,7 +100,6 @@ Dependencies: `bash`, `curl`, `jq`, and a Nerd Font for the icons.
 
 [GPL-3.0](LICENSE), same as [meteo-cli](https://codeberg.org/victorhck/meteo-cli), the project this one is inspired by.
 
-## Author
-
-[Nicolás Correa](https://github.com/ncorrea-13)
 </content>
+
+_Mendoza, Argentina · Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))_

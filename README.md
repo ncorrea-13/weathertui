@@ -5,7 +5,7 @@
 **Terminal UI for checking the current weather, written in Go**
 
 [![CI](https://github.com/ncorrea-13/weathertui/actions/workflows/ci.yml/badge.svg)](https://github.com/ncorrea-13/weathertui/actions/workflows/ci.yml)
-[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Go](https://img.shields.io/github/go-mod/go-version/ncorrea-13/weathertui?logo=go&logoColor=white)](https://go.dev)
 [![Bubble Tea](https://img.shields.io/badge/Bubble%20Tea-1.3-FF69B4?logo=go&logoColor=white)](https://github.com/charmbracelet/bubbletea)
 [![OpenWeatherMap](https://img.shields.io/badge/OpenWeatherMap-API-EB6E4B)](https://openweathermap.org/api)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
@@ -23,7 +23,7 @@ Terminal application that fetches the current weather for a city from the OpenWe
 
 | Layer | Tech |
 | --- | --- |
-| Language | Go 1.26+ |
+| Language | Go 1.27+ |
 | TUI framework | [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss) |
 | Data source | OpenWeatherMap API |
 

@@ -96,6 +96,10 @@ Kept as a reference/lightweight alternative — no Go toolchain needed.
 
 Dependencies: `bash`, `curl`, `jq`, and a Nerd Font for the icons.
 
+## Status
+
+Stable / Feature-complete. This software does everything I need it to do. I'll keep it working if dependencies break, but no new features are planned. Issues and PRs are still welcome.
+
 ## License
 
 [GPL-3.0](LICENSE), same as [meteo-cli](https://codeberg.org/victorhck/meteo-cli), the project this one is inspired by.
